@@ -1,131 +1,269 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strict Verbatim Document Inspector</title>
-    <!-- Tailwind CSS for clean styling -->
+    <title>Strict Verbatim Studio & Compliance Auditor</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.4);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.6);
+        }
+        .highlight-filler { background-color: rgba(251, 191, 36, 0.35); border-bottom: 2px solid #f59e0b; border-radius: 2px; padding: 0 2px; }
+        .highlight-falsestart { background-color: rgba(248, 113, 113, 0.35); border-bottom: 2px solid #ef4444; border-radius: 2px; padding: 0 2px; }
+        .highlight-tag { background-color: rgba(168, 85, 247, 0.35); border-bottom: 2px solid #a855f7; border-radius: 2px; padding: 0 2px; }
+        .highlight-slang { background-color: rgba(56, 189, 248, 0.35); border-bottom: 2px solid #0284c7; border-radius: 2px; padding: 0 2px; }
+        .highlight-grammar { background-color: rgba(74, 222, 128, 0.35); border-bottom: 2px solid #22c55e; border-radius: 2px; padding: 0 2px; }
+        .highlight-correction { background-color: rgba(251, 146, 60, 0.4); border-bottom: 2px dashed #ea580c; border-radius: 2px; padding: 0 2px; }
+        
+        /* Dark mode highlight adjustments */
+        .dark .highlight-filler { background-color: rgba(217, 119, 6, 0.4); color: #fef3c7; }
+        .dark .highlight-falsestart { background-color: rgba(220, 38, 38, 0.4); color: #fee2e2; }
+        .dark .highlight-tag { background-color: rgba(147, 51, 234, 0.4); color: #f3e8ff; }
+        .dark .highlight-slang { background-color: rgba(3, 105, 161, 0.4); color: #e0f2fe; }
+        .dark .highlight-grammar { background-color: rgba(21, 128, 61, 0.4); color: #dcfce7; }
+        .dark .highlight-correction { background-color: rgba(194, 65, 12, 0.4); color: #ffedd5; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
 
-    <!-- Header -->
-    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 mb-6">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-tight">Strict Verbatim Inspector</h1>
-            <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full uppercase tracking-wider font-semibold">Transcription Tool</span>
+    <!-- Header Navigation -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-brand-600 text-white rounded-lg shadow-sm">
+                    <i data-lucide="file-audio" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-tight text-slate-900 dark:text-white">Strict Verbatim Studio</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Audio Transcript Processing & Compliance Auditor</p>
+                </div>
+            </div>
+
+            <!-- Actions Header -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button id="sampleBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                    <span>Load Demo Raw Text</span>
+                </button>
+                <button id="themeToggle" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition" title="Toggle Theme">
+                    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-6xl mx-auto px-4 flex-grow w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- Main Workspace Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
         
-        <!-- Left Column: Input -->
-        <section class="flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <label for="transcriptInput" class="text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                <span>Paste Your Transcript / Document Text</span>
-                <button id="clearBtn" class="text-xs text-rose-500 hover:text-rose-700 font-medium">Clear Text</button>
-            </label>
-            <textarea id="transcriptInput" rows="14" class="w-full p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none font-mono text-sm leading-relaxed" placeholder="Type or paste your text here to analyze strict verbatim compliance..."></textarea>
-            
-            <div class="mt-4 grid grid-cols-3 gap-3 text-center">
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                    <span class="block text-xs text-slate-500 uppercase font-bold">Words</span>
-                    <span id="wordCount" class="text-lg font-bold text-slate-700">0</span>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                    <span class="block text-xs text-slate-500 uppercase font-bold">Fillers Found</span>
-                    <span id="fillerCount" class="text-lg font-bold text-amber-600">0</span>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                    <span class="block text-xs text-slate-500 uppercase font-bold">Audio Tags</span>
-                    <span id="tagCount" class="text-lg font-bold text-indigo-600">0</span>
-                </div>
+        <!-- Quick Preset Controls & Processing Bar -->
+        <section class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                <span class="font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider text-[11px]">Enforcement Profile:</span>
+                <label class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 px-2.5 py-1 rounded-md cursor-pointer select-none">
+                    <input type="checkbox" id="ruleFillers" checked class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span>Preserve Fillers (um/uh)</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 px-2.5 py-1 rounded-md cursor-pointer select-none">
+                    <input type="checkbox" id="ruleFalseStarts" checked class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span>Preserve False Starts (—)</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 px-2.5 py-1 rounded-md cursor-pointer select-none">
+                    <input type="checkbox" id="ruleTags" checked class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span>Audio Tags ([...])</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 px-2.5 py-1 rounded-md cursor-pointer select-none">
+                    <input type="checkbox" id="ruleSlang" checked class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span>Slang & Contractions</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 px-2.5 py-1 rounded-md cursor-pointer select-none">
+                    <input type="checkbox" id="ruleGrammar" checked class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span>Prevent Auto-Grammar</span>
+                </label>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="processBtn" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg shadow-sm transition active:scale-95">
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                    <span>Run Verbatim Processing</span>
+                </button>
             </div>
         </section>
 
-        <!-- Right Column: Inspector / Highlight View -->
-        <section class="flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 class="text-sm font-semibold text-slate-700 mb-2">Live Verbatim Highlighter</h2>
-            <div id="outputViewer" class="w-full h-[360px] p-4 border border-slate-300 bg-slate-50 rounded-lg overflow-y-auto font-mono text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
-                <span class="text-slate-400 italic">Highlighted text and detected markers will appear here automatically...</span>
-            </div>
+        <!-- Two Panel Layout (Input vs Output/Audit) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow">
             
-            <!-- Legend -->
-            <div class="mt-4 flex flex-wrap gap-3 text-xs text-slate-600 items-center">
-                <span class="font-semibold text-slate-700">Legend:</span>
-                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-amber-200 rounded-sm border border-amber-300"></span> Fillers (um, uh, like)</span>
-                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-indigo-200 rounded-sm border border-indigo-300"></span> Non-verbal Tags ([...])</span>
+            <!-- LEFT PANEL: Raw Input & Editor -->
+            <div class="flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden min-h-[500px]">
+                <!-- Panel Header -->
+                <div class="bg-slate-50 dark:bg-slate-800/80 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="edit-3" class="w-4 h-4 text-slate-500"></i>
+                        <h2 class="font-semibold text-sm text-slate-800 dark:text-slate-200">Raw Audio / Draft Transcript</h2>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                        <span>Words: <strong id="rawWordCount" class="text-slate-700 dark:text-slate-200">0</strong></span>
+                        <span>Chars: <strong id="rawCharCount" class="text-slate-700 dark:text-slate-200">0</strong></span>
+                        <button id="clearInputBtn" class="text-slate-400 hover:text-rose-500 transition ml-2" title="Clear Text">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="relative flex-grow flex flex-col p-4">
+                    <textarea id="rawInput" class="w-full flex-grow p-3 bg-transparent text-slate-800 dark:text-slate-100 font-mono text-sm leading-relaxed border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none" placeholder="Paste your raw transcript or uncleaned audio speech here...&#10;&#10;Example:&#10;Um so basically we went to— we went to the shop, and like he was gonna get some stuff [laughter]. He don't know nothing about it uh... th-this is wrong."></textarea>
+                </div>
+
+                <!-- Guidance Footer -->
+                <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 flex items-center justify-between">
+                    <span class="flex items-center gap-1"><i data-lucide="info" class="w-3.5 h-3.5"></i> Strict verbatim prohibits removing stuttering, hesitation, or fixing bad grammar.</span>
+                </div>
             </div>
-        </section>
 
-    </main>
+            <!-- RIGHT PANEL: Verbatim Document & Audit Report -->
+            <div class="flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden min-h-[500px]">
+                
+                <!-- Tab Navigation Header -->
+                <div class="bg-slate-50 dark:bg-slate-800/80 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-1 bg-slate-200/70 dark:bg-slate-700 p-1 rounded-lg">
+                        <button id="tabDocBtn" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm flex items-center gap-1.5 transition">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                            <span>Verbatim Document</span>
+                        </button>
+                        <button id="tabAuditBtn" class="px-3 py-1.5 text-xs font-semibold rounded-md text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 transition">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            <span>Compliance Audit</span>
+                            <span id="badgeAuditCount" class="ml-1 px-1.5 py-0.2 bg-amber-500 text-white text-[10px] rounded-full font-bold">0</span>
+                        </button>
+                    </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 text-center py-4 text-xs text-slate-500">
-        Strict Verbatim Document Utility &copy; 2026
-    </footer>
+                    <!-- Actions -->
+                    <div class="flex items-center gap-1">
+                        <button id="copyBtn" class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition text-xs flex items-center gap-1" title="Copy Document">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Copy</span>
+                        </button>
+                        <div class="relative group inline-block text-left">
+                            <button class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition text-xs flex items-center gap-1" title="Download Options">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span class="hidden sm:inline">Export</span>
+                            </button>
+                            <div class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden group-hover:block z-20 py-1 text-xs">
+                                <button id="downloadTxtBtn" class="w-full text-left px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+                                    <i data-lucide="file-code" class="w-3.5 h-3.5"></i> Export .TXT
+                                </button>
+                                <button id="downloadDocBtn" class="w-full text-left px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+                                    <i data-lucide="file" class="w-3.5 h-3.5"></i> Export .DOC
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- JavaScript Processing Logic -->
-    <script>
-        const input = document.getElementById('transcriptInput');
-        const output = document.getElementById('outputViewer');
-        const wordCountDisplay = document.getElementById('wordCount');
-        const fillerCountDisplay = document.getElementById('fillerCount');
-        const tagCountDisplay = document.getElementById('tagCount');
-        const clearBtn = document.getElementById('clearBtn');
+                <!-- Tab 1 View: Strict Verbatim Document Render -->
+                <div id="viewDocument" class="flex-grow flex flex-col p-4 overflow-y-auto">
+                    <!-- Filter Highlights Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-100 dark:border-slate-700/50 text-xs">
+                        <span class="text-slate-500 font-medium">Highlight Filter:</span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="hlFiller" checked class="rounded border-slate-300 text-amber-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Fillers
+                            </label>
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="hlFalseStart" checked class="rounded border-slate-300 text-rose-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> False Starts
+                            </label>
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="hlTag" checked class="rounded border-slate-300 text-purple-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Audio Tags
+                            </label>
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="hlSlang" checked class="rounded border-slate-300 text-sky-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> Slang
+                            </label>
+                            <label class="inline-flex items-center gap-1 cursor-pointer">
+                                <input type="checkbox" id="hlGrammar" checked class="rounded border-slate-300 text-green-500">
+                                <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span> Colloquial Grammar
+                            </label>
+                        </div>
+                    </div>
 
-        // Common strict verbatim fillers & hesitation markers
-        const fillerRegex = /\b(um|uh|er|ah|like|you know|right|hm|mm)\b/gi;
-        // Bracketed tags like [laughter], [inaudible 00:02], etc.
-        const tagRegex = /\[(.*?)\]/g;
+                    <!-- Highlighted Document Output Screen -->
+                    <div id="verbatimOutput" class="flex-grow p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/70 rounded-lg font-mono text-sm leading-relaxed whitespace-pre-wrap overflow-y-auto min-h-[300px]">
+                        <span class="text-slate-400 italic">Strict verbatim text will render here with active color highlighting after processing...</span>
+                    </div>
+                </div>
 
-        function processText() {
-            const text = input.value;
+                <!-- Tab 2 View: Compliance Audit Report -->
+                <div id="viewAudit" class="hidden flex-grow flex flex-col p-4 overflow-y-auto space-y-4">
+                    
+                    <!-- Audit Executive Metrics Overview -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl">
+                            <div class="text-amber-700 dark:text-amber-400 font-semibold text-xs uppercase tracking-wider">Fillers</div>
+                            <div id="statFillers" class="text-2xl font-bold text-amber-900 dark:text-amber-200 mt-1">0</div>
+                            <div class="text-[10px] text-amber-600 dark:text-amber-400 mt-0.5">um, uh, like, you know</div>
+                        </div>
+                        <div class="p-3 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 rounded-xl">
+                            <div class="text-rose-700 dark:text-rose-400 font-semibold text-xs uppercase tracking-wider">False Starts</div>
+                            <div id="statFalseStarts" class="text-2xl font-bold text-rose-900 dark:text-rose-200 mt-1">0</div>
+                            <div class="text-[10px] text-rose-600 dark:text-rose-400 mt-0.5">Hyphenated stutters / cuts</div>
+                        </div>
+                        <div class="p-3 bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/50 rounded-xl">
+                            <div class="text-purple-700 dark:text-purple-400 font-semibold text-xs uppercase tracking-wider">Audio Tags</div>
+                            <div id="statTags" class="text-2xl font-bold text-purple-900 dark:text-purple-200 mt-1">0</div>
+                            <div class="text-[10px] text-purple-600 dark:text-purple-400 mt-0.5">[laughter], [inaudible]</div>
+                        </div>
+                        <div class="p-3 bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/50 rounded-xl">
+                            <div class="text-sky-700 dark:text-sky-400 font-semibold text-xs uppercase tracking-wider">Slang / Non-std</div>
+                            <div id="statSlang" class="text-2xl font-bold text-sky-900 dark:text-sky-200 mt-1">0</div>
+                            <div class="text-[10px] text-sky-600 dark:text-sky-400 mt-0.5">gonna, wanna, gotta, y'all</div>
+                        </div>
+                    </div>
 
-            if (!text.trim()) {
-                output.innerHTML = '<span class="text-slate-400 italic">Highlighted text and detected markers will appear here automatically...</span>';
-                wordCountDisplay.textContent = '0';
-                fillerCountDisplay.textContent = '0';
-                tagCountDisplay.textContent = '0';
-                return;
-            }
-
-            // Word Count
-            const words = text.trim().match(/\S+/g) || [];
-            wordCountDisplay.textContent = words.length;
-
-            // Count Fillers
-            const fillers = text.match(fillerRegex) || [];
-            fillerCountDisplay.textContent = fillers.length;
-
-            // Count Tags
-            const tags = text.match(tagRegex) || [];
-            tagCountDisplay.textContent = tags.length;
-
-            // HTML Escaping to prevent injection bugs
-            let escaped = text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-
-            // Highlight Fillers in Amber
-            escaped = escaped.replace(fillerRegex, '<span class="bg-amber-200 text-amber-900 px-1 rounded font-semibold">$&</span>');
-
-            // Highlight Tags in Indigo
-            escaped = escaped.replace(/\[(.*?)\]/g, '<span class="bg-indigo-100 text-indigo-800 px-1 rounded font-semibold border border-indigo-200">[$1]</span>');
-
-            output.innerHTML = escaped;
-        }
-
-        input.addEventListener('input', processText);
-
-        clearBtn.addEventListener('click', () => {
-            input.value = '';
-            processText();
-            input.focus();
-        });
-    </script>
-</body>
-              </html>
-                                                                    
+                    <!-- Cleaned-up Omissions / Warnings Section -->
+                    <div id="warningContainer" class="p-4 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded-xl hidden">
+                        <div class="flex items-center gap-2 text-orange-800 dark:text-orange-300 font-semibold text-xs mb-2">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-orange-600 dark:text-orange-400"></i>
+                            <span>Potential Clean-up / Omission Warnings Detected</span>
+                        </div>
+                        <p class="text-xs text-orange-700 dark:text-orange-300/80 mb-2">
+                            The system flagged instances where standard clean-up or auto-correction may have compromised strict verbatim rules:
+              
