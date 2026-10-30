@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strict Verbatim Document Inspector</title>
+    <!-- Tailwind CSS for clean styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 mb-6">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-tight">Strict Verbatim Inspector</h1>
+            <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full uppercase tracking-wider font-semibold">Transcription Tool</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 flex-grow w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Left Column: Input -->
+        <section class="flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <label for="transcriptInput" class="text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                <span>Paste Your Transcript / Document Text</span>
+                <button id="clearBtn" class="text-xs text-rose-500 hover:text-rose-700 font-medium">Clear Text</button>
+            </label>
+            <textarea id="transcriptInput" rows="14" class="w-full p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none font-mono text-sm leading-relaxed" placeholder="Type or paste your text here to analyze strict verbatim compliance..."></textarea>
+            
+            <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <span class="block text-xs text-slate-500 uppercase font-bold">Words</span>
+                    <span id="wordCount" class="text-lg font-bold text-slate-700">0</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <span class="block text-xs text-slate-500 uppercase font-bold">Fillers Found</span>
+                    <span id="fillerCount" class="text-lg font-bold text-amber-600">0</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <span class="block text-xs text-slate-500 uppercase font-bold">Audio Tags</span>
+                    <span id="tagCount" class="text-lg font-bold text-indigo-600">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Inspector / Highlight View -->
+        <section class="flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <h2 class="text-sm font-semibold text-slate-700 mb-2">Live Verbatim Highlighter</h2>
+            <div id="outputViewer" class="w-full h-[360px] p-4 border border-slate-300 bg-slate-50 rounded-lg overflow-y-auto font-mono text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
+                <span class="text-slate-400 italic">Highlighted text and detected markers will appear here automatically...</span>
+            </div>
+            
+            <!-- Legend -->
+            <div class="mt-4 flex flex-wrap gap-3 text-xs text-slate-600 items-center">
+                <span class="font-semibold text-slate-700">Legend:</span>
+                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-amber-200 rounded-sm border border-amber-300"></span> Fillers (um, uh, like)</span>
+                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-indigo-200 rounded-sm border border-indigo-300"></span> Non-verbal Tags ([...])</span>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 text-center py-4 text-xs text-slate-500">
+        Strict Verbatim Document Utility &copy; 2026
+    </footer>
+
+    <!-- JavaScript Processing Logic -->
+    <script>
+        const input = document.getElementById('transcriptInput');
+        const output = document.getElementById('outputViewer');
+        const wordCountDisplay = document.getElementById('wordCount');
+        const fillerCountDisplay = document.getElementById('fillerCount');
+        const tagCountDisplay = document.getElementById('tagCount');
+        const clearBtn = document.getElementById('clearBtn');
+
+        // Common strict verbatim fillers & hesitation markers
+        const fillerRegex = /\b(um|uh|er|ah|like|you know|right|hm|mm)\b/gi;
+        // Bracketed tags like [laughter], [inaudible 00:02], etc.
+        const tagRegex = /\[(.*?)\]/g;
+
+        function processText() {
+            const text = input.value;
+
+            if (!text.trim()) {
+                output.innerHTML = '<span class="text-slate-400 italic">Highlighted text and detected markers will appear here automatically...</span>';
+                wordCountDisplay.textContent = '0';
+                fillerCountDisplay.textContent = '0';
+                tagCountDisplay.textContent = '0';
+                return;
+            }
+
+            // Word Count
+            const words = text.trim().match(/\S+/g) || [];
+            wordCountDisplay.textContent = words.length;
+
+            // Count Fillers
+            const fillers = text.match(fillerRegex) || [];
+            fillerCountDisplay.textContent = fillers.length;
+
+            // Count Tags
+            const tags = text.match(tagRegex) || [];
+            tagCountDisplay.textContent = tags.length;
+
+            // HTML Escaping to prevent injection bugs
+            let escaped = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Highlight Fillers in Amber
+            escaped = escaped.replace(fillerRegex, '<span class="bg-amber-200 text-amber-900 px-1 rounded font-semibold">$&</span>');
+
+            // Highlight Tags in Indigo
+            escaped = escaped.replace(/\[(.*?)\]/g, '<span class="bg-indigo-100 text-indigo-800 px-1 rounded font-semibold border border-indigo-200">[$1]</span>');
+
+            output.innerHTML = escaped;
+        }
+
+        input.addEventListener('input', processText);
+
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            processText();
+            input.focus();
+        });
+    </script>
+</body>
+              </html>
+                                                                    
